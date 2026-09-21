@@ -10,7 +10,7 @@ This project implements three integer data structures without using Java collect
 
 `Benchmark` runs the four required workloads and writes the measurements to `results/tables/results.csv`. Java collections are used only in tests as reference implementations.
 
-Run all tests with `mvn test`. Run the benchmark with `mvn compile exec:java`, then create the plots with `python plot_results.py`.
+Requirements: JDK 17+, Maven 3.9+, and Python 3 with Matplotlib. Run all tests with `mvn test`. Run the benchmark with `mvn compile exec:java`, then create the plots with `python plot_results.py`.
 
 ## 2. Complexity Analysis
 
@@ -93,10 +93,10 @@ Metrics are direct array accesses, linked-node accesses, element movements, or h
 
 | n | Dynamic Array time (ms) | Accesses | Linked List time (ms) | Node accesses |
 |---:|---:|---:|---:|---:|
-| 100 | 0.182 | 10,000 | 0.454 | 511,508 |
-| 1,000 | 0.030 | 10,000 | 4.663 | 5,015,208 |
-| 10,000 | 0.004 | 10,000 | 51.878 | 50,139,208 |
-| 100,000 | 0.005 | 10,000 | 599.176 | 502,499,208 |
+| 100 | 0.192 | 10,000 | 0.487 | 511,508 |
+| 1,000 | 0.038 | 10,000 | 5.307 | 5,015,208 |
+| 10,000 | 0.141 | 10,000 | 57.583 | 50,139,208 |
+| 100,000 | 0.006 | 10,000 | 554.861 | 502,499,208 |
 
 Dynamic Array performs exactly one access per request, independent of `n`. Linked List traversal grows linearly with `n`. The very small Dynamic Array times are affected by JVM and timer noise, but its operation count stays constant.
 
@@ -104,10 +104,10 @@ Dynamic Array performs exactly one access per request, independent of `n`. Linke
 
 | n | Dynamic Array time (ms) | Comparisons | Linked List time (ms) | Comparisons |
 |---:|---:|---:|---:|---:|
-| 100 | 0.232 | 75,572 | 0.215 | 75,572 |
-| 1,000 | 0.591 | 752,172 | 1.250 | 752,172 |
-| 10,000 | 1.408 | 7,406,172 | 11.444 | 7,406,172 |
-| 100,000 | 14.956 | 74,446,172 | 111.315 | 74,446,172 |
+| 100 | 0.174 | 75,572 | 0.180 | 75,572 |
+| 1,000 | 0.599 | 752,172 | 1.305 | 752,172 |
+| 10,000 | 1.639 | 7,406,172 | 11.337 | 7,406,172 |
+| 100,000 | 17.400 | 74,446,172 | 129.787 | 74,446,172 |
 
 Both searches make the same number of comparisons and show Θ(n) growth. Dynamic Array is faster at large sizes because contiguous array traversal has better cache locality.
 
@@ -117,10 +117,10 @@ Each cell shows average time in milliseconds followed by movements or node acces
 
 | n | Array insert, Θ(n) | Array remove, Θ(n) | List insert, Θ(1) | List remove, Θ(1) |
 |---:|---:|---:|---:|---:|
-| 100 | 1.159 / 601,620 | 1.531 / 599,500 | 0.021 / 0 | 0.052 / 1,000 |
-| 1,000 | 0.250 / 1,501,780 | 0.232 / 1,499,500 | 0.024 / 0 | 0.019 / 1,000 |
-| 10,000 | 1.646 / 10,510,740 | 1.492 / 10,499,500 | 0.011 / 0 | 0.009 / 1,000 |
-| 100,000 | 16.625 / 100,500,500 | 15.922 / 100,499,500 | 0.070 / 0 | 0.007 / 1,000 |
+| 100 | 1.263 / 601,620 | 1.089 / 599,500 | 0.027 / 0 | 0.060 / 1,000 |
+| 1,000 | 0.278 / 1,501,780 | 0.264 / 1,499,500 | 0.030 / 0 | 0.019 / 1,000 |
+| 10,000 | 1.957 / 10,510,740 | 1.849 / 10,499,500 | 0.024 / 0 | 0.021 / 1,000 |
+| 100,000 | 19.074 / 100,500,500 | 19.063 / 100,499,500 | 0.019 / 0 | 0.011 / 1,000 |
 
 Linked List changes only the head references. Dynamic Array must shift the stored elements.
 
@@ -128,10 +128,10 @@ Linked List changes only the head references. Dynamic Array must shift the store
 
 | n | Array insert, Θ(n) | Array remove, Θ(n) | List insert, Θ(n) | List remove, Θ(n) |
 |---:|---:|---:|---:|---:|
-| 100 | 0.110 / 551,620 | 0.100 / 549,500 | 0.101 / 50,000 | 0.071 / 51,000 |
-| 1,000 | 0.175 / 1,001,780 | 0.162 / 999,500 | 0.524 / 500,000 | 0.529 / 501,000 |
-| 10,000 | 0.810 / 5,510,740 | 0.737 / 5,499,500 | 5.795 / 5,000,000 | 5.358 / 5,001,000 |
-| 100,000 | 7.954 / 50,500,500 | 7.884 / 50,499,500 | 56.556 / 50,000,000 | 53.501 / 50,001,000 |
+| 100 | 0.120 / 551,620 | 0.113 / 549,500 | 0.148 / 50,000 | 0.091 / 51,000 |
+| 1,000 | 0.196 / 1,001,780 | 0.181 / 999,500 | 0.587 / 500,000 | 0.582 / 501,000 |
+| 10,000 | 1.052 / 5,510,740 | 0.960 / 5,499,500 | 5.162 / 5,000,000 | 4.982 / 5,001,000 |
+| 100,000 | 9.396 / 50,500,500 | 9.148 / 50,499,500 | 63.468 / 50,000,000 | 67.723 / 50,001,000 |
 
 Both structures have linear middle operations. The array is faster for large `n` because shifting contiguous integers is cheaper than following many node references.
 
@@ -139,10 +139,10 @@ Both structures have linear middle operations. The array is faster for large `n`
 
 | n | Insert time (ms) | Insert comparisons, O(n log n) total | Extract time (ms) | Extract comparisons, Θ(n log n) total |
 |---:|---:|---:|---:|---:|
-| 100 | 0.006 | 207 | 0.043 | 845 |
-| 1,000 | 0.027 | 2,207 | 0.066 | 14,988 |
-| 10,000 | 0.217 | 22,785 | 0.592 | 216,538 |
-| 100,000 | 1.377 | 228,896 | 6.629 | 2,831,900 |
+| 100 | 0.003 | 207 | 0.036 | 845 |
+| 1,000 | 0.035 | 2,207 | 0.074 | 14,988 |
+| 10,000 | 0.416 | 22,785 | 0.968 | 216,538 |
+| 100,000 | 1.426 | 228,896 | 7.532 | 2,831,900 |
 
 All extracted sequences were verified to be non-decreasing. Extraction comparisons grow near `n log n`. Random insertion used about 2.3 comparisons per item, which is below its `O(log n)` worst-case bound.
 

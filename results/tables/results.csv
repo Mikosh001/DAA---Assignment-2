@@ -1,57 +1,57 @@
 workload,structure,operation,n,m,average_time_ns,average_time_ms,metric_name,average_metric,theoretical_complexity
-random_access,DynamicArray,get,100,10000,181680,0.181680,element_accesses,10000,Theta(1)
-random_access,LinkedList,get,100,10000,453640,0.453640,node_accesses,511508,Theta(n) average
-random_access,DynamicArray,get,1000,10000,29560,0.029560,element_accesses,10000,Theta(1)
-random_access,LinkedList,get,1000,10000,4663380,4.663380,node_accesses,5015208,Theta(n) average
-random_access,DynamicArray,get,10000,10000,4420,0.004420,element_accesses,10000,Theta(1)
-random_access,LinkedList,get,10000,10000,51877740,51.877740,node_accesses,50139208,Theta(n) average
-random_access,DynamicArray,get,100000,10000,5340,0.005340,element_accesses,10000,Theta(1)
-random_access,LinkedList,get,100000,10000,599176180,599.176180,node_accesses,502499208,Theta(n) average
-search,DynamicArray,contains,100,1000,231980,0.231980,comparisons,75572,Theta(n) average
-search,LinkedList,contains,100,1000,215020,0.215020,comparisons,75572,Theta(n) average
-search,DynamicArray,contains,1000,1000,590520,0.590520,comparisons,752172,Theta(n) average
-search,LinkedList,contains,1000,1000,1250480,1.250480,comparisons,752172,Theta(n) average
-search,DynamicArray,contains,10000,1000,1407880,1.407880,comparisons,7406172,Theta(n) average
-search,LinkedList,contains,10000,1000,11444120,11.444120,comparisons,7406172,Theta(n) average
-search,DynamicArray,contains,100000,1000,14956420,14.956420,comparisons,74446172,Theta(n) average
-search,LinkedList,contains,100000,1000,111315340,111.315340,comparisons,74446172,Theta(n) average
-insertion_removal,DynamicArray,insert_beginning,100,1000,1158680,1.158680,element_movements,601620,Theta(n)
-insertion_removal,DynamicArray,remove_beginning,100,1000,1530640,1.530640,element_movements,599500,Theta(n)
-insertion_removal,LinkedList,insert_beginning,100,1000,21480,0.021480,node_accesses,0,Theta(1)
-insertion_removal,LinkedList,remove_beginning,100,1000,51580,0.051580,node_accesses,1000,Theta(1)
-insertion_removal,DynamicArray,insert_middle,100,1000,109540,0.109540,element_movements,551620,Theta(n)
-insertion_removal,DynamicArray,remove_middle,100,1000,100480,0.100480,element_movements,549500,Theta(n)
-insertion_removal,LinkedList,insert_middle,100,1000,101400,0.101400,node_accesses,50000,Theta(n)
-insertion_removal,LinkedList,remove_middle,100,1000,71180,0.071180,node_accesses,51000,Theta(n)
-insertion_removal,DynamicArray,insert_beginning,1000,1000,250380,0.250380,element_movements,1501780,Theta(n)
-insertion_removal,DynamicArray,remove_beginning,1000,1000,231720,0.231720,element_movements,1499500,Theta(n)
-insertion_removal,LinkedList,insert_beginning,1000,1000,23660,0.023660,node_accesses,0,Theta(1)
-insertion_removal,LinkedList,remove_beginning,1000,1000,18540,0.018540,node_accesses,1000,Theta(1)
-insertion_removal,DynamicArray,insert_middle,1000,1000,174920,0.174920,element_movements,1001780,Theta(n)
-insertion_removal,DynamicArray,remove_middle,1000,1000,162240,0.162240,element_movements,999500,Theta(n)
-insertion_removal,LinkedList,insert_middle,1000,1000,523840,0.523840,node_accesses,500000,Theta(n)
-insertion_removal,LinkedList,remove_middle,1000,1000,529340,0.529340,node_accesses,501000,Theta(n)
-insertion_removal,DynamicArray,insert_beginning,10000,1000,1645980,1.645980,element_movements,10510740,Theta(n)
-insertion_removal,DynamicArray,remove_beginning,10000,1000,1492320,1.492320,element_movements,10499500,Theta(n)
-insertion_removal,LinkedList,insert_beginning,10000,1000,10760,0.010760,node_accesses,0,Theta(1)
-insertion_removal,LinkedList,remove_beginning,10000,1000,9340,0.009340,node_accesses,1000,Theta(1)
-insertion_removal,DynamicArray,insert_middle,10000,1000,810000,0.810000,element_movements,5510740,Theta(n)
-insertion_removal,DynamicArray,remove_middle,10000,1000,737200,0.737200,element_movements,5499500,Theta(n)
-insertion_removal,LinkedList,insert_middle,10000,1000,5794520,5.794520,node_accesses,5000000,Theta(n)
-insertion_removal,LinkedList,remove_middle,10000,1000,5357980,5.357980,node_accesses,5001000,Theta(n)
-insertion_removal,DynamicArray,insert_beginning,100000,1000,16625100,16.625100,element_movements,100500500,Theta(n)
-insertion_removal,DynamicArray,remove_beginning,100000,1000,15922400,15.922400,element_movements,100499500,Theta(n)
-insertion_removal,LinkedList,insert_beginning,100000,1000,70080,0.070080,node_accesses,0,Theta(1)
-insertion_removal,LinkedList,remove_beginning,100000,1000,6860,0.006860,node_accesses,1000,Theta(1)
-insertion_removal,DynamicArray,insert_middle,100000,1000,7954100,7.954100,element_movements,50500500,Theta(n)
-insertion_removal,DynamicArray,remove_middle,100000,1000,7883660,7.883660,element_movements,50499500,Theta(n)
-insertion_removal,LinkedList,insert_middle,100000,1000,56556420,56.556420,node_accesses,50000000,Theta(n)
-insertion_removal,LinkedList,remove_middle,100000,1000,53500760,53.500760,node_accesses,50001000,Theta(n)
-priority_processing,MinHeap,insert,100,100,5640,0.005640,comparisons,207,O(log n) each
-priority_processing,MinHeap,extract_min,100,100,42620,0.042620,comparisons,845,Theta(log n) each
-priority_processing,MinHeap,insert,1000,1000,27360,0.027360,comparisons,2207,O(log n) each
-priority_processing,MinHeap,extract_min,1000,1000,66460,0.066460,comparisons,14988,Theta(log n) each
-priority_processing,MinHeap,insert,10000,10000,217140,0.217140,comparisons,22785,O(log n) each
-priority_processing,MinHeap,extract_min,10000,10000,591900,0.591900,comparisons,216538,Theta(log n) each
-priority_processing,MinHeap,insert,100000,100000,1377180,1.377180,comparisons,228896,O(log n) each
-priority_processing,MinHeap,extract_min,100000,100000,6629040,6.629040,comparisons,2831900,Theta(log n) each
+random_access,DynamicArray,get,100,10000,191860,0.191860,element_accesses,10000,Theta(1)
+random_access,LinkedList,get,100,10000,486880,0.486880,node_accesses,511508,Theta(n) average
+random_access,DynamicArray,get,1000,10000,37820,0.037820,element_accesses,10000,Theta(1)
+random_access,LinkedList,get,1000,10000,5306820,5.306820,node_accesses,5015208,Theta(n) average
+random_access,DynamicArray,get,10000,10000,141300,0.141300,element_accesses,10000,Theta(1)
+random_access,LinkedList,get,10000,10000,57583440,57.583440,node_accesses,50139208,Theta(n) average
+random_access,DynamicArray,get,100000,10000,5820,0.005820,element_accesses,10000,Theta(1)
+random_access,LinkedList,get,100000,10000,554860720,554.860720,node_accesses,502499208,Theta(n) average
+search,DynamicArray,contains,100,1000,173960,0.173960,comparisons,75572,Theta(n) average
+search,LinkedList,contains,100,1000,179600,0.179600,comparisons,75572,Theta(n) average
+search,DynamicArray,contains,1000,1000,599020,0.599020,comparisons,752172,Theta(n) average
+search,LinkedList,contains,1000,1000,1304540,1.304540,comparisons,752172,Theta(n) average
+search,DynamicArray,contains,10000,1000,1639200,1.639200,comparisons,7406172,Theta(n) average
+search,LinkedList,contains,10000,1000,11337320,11.337320,comparisons,7406172,Theta(n) average
+search,DynamicArray,contains,100000,1000,17400260,17.400260,comparisons,74446172,Theta(n) average
+search,LinkedList,contains,100000,1000,129787280,129.787280,comparisons,74446172,Theta(n) average
+insertion_removal,DynamicArray,insert_beginning,100,1000,1262740,1.262740,element_movements,601620,Theta(n)
+insertion_removal,DynamicArray,remove_beginning,100,1000,1089040,1.089040,element_movements,599500,Theta(n)
+insertion_removal,LinkedList,insert_beginning,100,1000,26540,0.026540,node_accesses,0,Theta(1)
+insertion_removal,LinkedList,remove_beginning,100,1000,59940,0.059940,node_accesses,1000,Theta(1)
+insertion_removal,DynamicArray,insert_middle,100,1000,119760,0.119760,element_movements,551620,Theta(n)
+insertion_removal,DynamicArray,remove_middle,100,1000,112700,0.112700,element_movements,549500,Theta(n)
+insertion_removal,LinkedList,insert_middle,100,1000,147680,0.147680,node_accesses,50000,Theta(n)
+insertion_removal,LinkedList,remove_middle,100,1000,91460,0.091460,node_accesses,51000,Theta(n)
+insertion_removal,DynamicArray,insert_beginning,1000,1000,277640,0.277640,element_movements,1501780,Theta(n)
+insertion_removal,DynamicArray,remove_beginning,1000,1000,263600,0.263600,element_movements,1499500,Theta(n)
+insertion_removal,LinkedList,insert_beginning,1000,1000,29760,0.029760,node_accesses,0,Theta(1)
+insertion_removal,LinkedList,remove_beginning,1000,1000,18880,0.018880,node_accesses,1000,Theta(1)
+insertion_removal,DynamicArray,insert_middle,1000,1000,196080,0.196080,element_movements,1001780,Theta(n)
+insertion_removal,DynamicArray,remove_middle,1000,1000,180740,0.180740,element_movements,999500,Theta(n)
+insertion_removal,LinkedList,insert_middle,1000,1000,587220,0.587220,node_accesses,500000,Theta(n)
+insertion_removal,LinkedList,remove_middle,1000,1000,581900,0.581900,node_accesses,501000,Theta(n)
+insertion_removal,DynamicArray,insert_beginning,10000,1000,1957220,1.957220,element_movements,10510740,Theta(n)
+insertion_removal,DynamicArray,remove_beginning,10000,1000,1849240,1.849240,element_movements,10499500,Theta(n)
+insertion_removal,LinkedList,insert_beginning,10000,1000,23840,0.023840,node_accesses,0,Theta(1)
+insertion_removal,LinkedList,remove_beginning,10000,1000,20580,0.020580,node_accesses,1000,Theta(1)
+insertion_removal,DynamicArray,insert_middle,10000,1000,1052400,1.052400,element_movements,5510740,Theta(n)
+insertion_removal,DynamicArray,remove_middle,10000,1000,960040,0.960040,element_movements,5499500,Theta(n)
+insertion_removal,LinkedList,insert_middle,10000,1000,5162020,5.162020,node_accesses,5000000,Theta(n)
+insertion_removal,LinkedList,remove_middle,10000,1000,4982500,4.982500,node_accesses,5001000,Theta(n)
+insertion_removal,DynamicArray,insert_beginning,100000,1000,19073580,19.073580,element_movements,100500500,Theta(n)
+insertion_removal,DynamicArray,remove_beginning,100000,1000,19063420,19.063420,element_movements,100499500,Theta(n)
+insertion_removal,LinkedList,insert_beginning,100000,1000,18720,0.018720,node_accesses,0,Theta(1)
+insertion_removal,LinkedList,remove_beginning,100000,1000,10800,0.010800,node_accesses,1000,Theta(1)
+insertion_removal,DynamicArray,insert_middle,100000,1000,9395500,9.395500,element_movements,50500500,Theta(n)
+insertion_removal,DynamicArray,remove_middle,100000,1000,9148420,9.148420,element_movements,50499500,Theta(n)
+insertion_removal,LinkedList,insert_middle,100000,1000,63467500,63.467500,node_accesses,50000000,Theta(n)
+insertion_removal,LinkedList,remove_middle,100000,1000,67722740,67.722740,node_accesses,50001000,Theta(n)
+priority_processing,MinHeap,insert,100,100,3280,0.003280,comparisons,207,O(log n) each
+priority_processing,MinHeap,extract_min,100,100,36340,0.036340,comparisons,845,Theta(log n) each
+priority_processing,MinHeap,insert,1000,1000,34980,0.034980,comparisons,2207,O(log n) each
+priority_processing,MinHeap,extract_min,1000,1000,73780,0.073780,comparisons,14988,Theta(log n) each
+priority_processing,MinHeap,insert,10000,10000,416460,0.416460,comparisons,22785,O(log n) each
+priority_processing,MinHeap,extract_min,10000,10000,968440,0.968440,comparisons,216538,Theta(log n) each
+priority_processing,MinHeap,insert,100000,100000,1426260,1.426260,comparisons,228896,O(log n) each
+priority_processing,MinHeap,extract_min,100000,100000,7531700,7.531700,comparisons,2831900,Theta(log n) each

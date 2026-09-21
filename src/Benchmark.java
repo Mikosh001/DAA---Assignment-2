@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -15,6 +13,7 @@ public final class Benchmark {
     private static final int ACCESS_OPERATIONS = 10_000;
     private static final int SEARCH_OPERATIONS = 1_000;
     private static final int CHANGE_OPERATIONS = 1_000;
+    private static final int RESULT_ROW_COUNT = 56;
     private static volatile long sink;
 
     private Benchmark() {
@@ -23,19 +22,22 @@ public final class Benchmark {
     public static void main(String[] args) throws IOException {
         String outputFile = args.length == 0
                 ? "results/tables/results.csv" : args[0];
-        List<ResultRow> rows = new ArrayList<ResultRow>();
+        ResultRow[] rows = new ResultRow[RESULT_ROW_COUNT];
 
         warmUp();
-        runRandomAccess(rows);
-        runSearch(rows);
-        runInsertionAndRemoval(rows);
-        runPriorityProcessing(rows);
+        int next = runRandomAccess(rows, 0);
+        next = runSearch(rows, next);
+        next = runInsertionAndRemoval(rows, next);
+        next = runPriorityProcessing(rows, next);
+        if (next != rows.length) {
+            throw new IllegalStateException("unexpected result row count: " + next);
+        }
         writeCsv(rows, Paths.get(outputFile));
 
         System.out.println("Assignment 2: Data Structure Analysis");
         System.out.println("All four workloads completed successfully.");
         System.out.println("Repetitions per experiment: " + REPETITIONS);
-        System.out.println("Result rows written: " + rows.size());
+        System.out.println("Result rows written: " + rows.length);
         System.out.println("CSV file: " + outputFile);
         System.out.println("Correctness checks passed.");
     }
@@ -62,7 +64,7 @@ public final class Benchmark {
         sink ^= checksum;
     }
 
-    private static void runRandomAccess(List<ResultRow> rows) {
+    private static int runRandomAccess(ResultRow[] rows, int next) {
         for (int n : SIZES) {
             int[] values = randomValues(n, 42L);
             int[] indices = randomIndices(ACCESS_OPERATIONS, n, 42L);
@@ -80,8 +82,8 @@ public final class Benchmark {
                 metric += array.getAccesses();
                 sink ^= checksum;
             }
-            rows.add(row("random_access", "DynamicArray", "get", n,
-                    ACCESS_OPERATIONS, time, "element_accesses", metric, "Theta(1)"));
+            rows[next++] = row("random_access", "DynamicArray", "get", n,
+                    ACCESS_OPERATIONS, time, "element_accesses", metric, "Theta(1)");
 
             time = 0;
             metric = 0;
@@ -97,12 +99,13 @@ public final class Benchmark {
                 metric += list.getAccesses();
                 sink ^= checksum;
             }
-            rows.add(row("random_access", "LinkedList", "get", n,
-                    ACCESS_OPERATIONS, time, "node_accesses", metric, "Theta(n) average"));
+            rows[next++] = row("random_access", "LinkedList", "get", n,
+                    ACCESS_OPERATIONS, time, "node_accesses", metric, "Theta(n) average");
         }
+        return next;
     }
 
-    private static void runSearch(List<ResultRow> rows) {
+    private static int runSearch(ResultRow[] rows, int next) {
         for (int n : SIZES) {
             int[] values = randomValues(n, 42L);
             int[] queries = searchValues(values, SEARCH_OPERATIONS, 42L);
@@ -122,8 +125,8 @@ public final class Benchmark {
                 metric += array.getComparisons();
                 sink ^= found;
             }
-            rows.add(row("search", "DynamicArray", "contains", n,
-                    SEARCH_OPERATIONS, time, "comparisons", metric, "Theta(n) average"));
+            rows[next++] = row("search", "DynamicArray", "contains", n,
+                    SEARCH_OPERATIONS, time, "comparisons", metric, "Theta(n) average");
 
             time = 0;
             metric = 0;
@@ -141,25 +144,36 @@ public final class Benchmark {
                 metric += list.getComparisons();
                 sink ^= found;
             }
-            rows.add(row("search", "LinkedList", "contains", n,
-                    SEARCH_OPERATIONS, time, "comparisons", metric, "Theta(n) average"));
+            rows[next++] = row("search", "LinkedList", "contains", n,
+                    SEARCH_OPERATIONS, time, "comparisons", metric, "Theta(n) average");
         }
+        return next;
     }
 
-    private static void runInsertionAndRemoval(List<ResultRow> rows) {
+    private static int runInsertionAndRemoval(ResultRow[] rows, int next) {
+        int[] insertedValues = new int[CHANGE_OPERATIONS];
+        for (int operation = 0; operation < CHANGE_OPERATIONS; operation++) {
+            insertedValues[operation] = -operation - 1;
+        }
         for (int n : SIZES) {
             int[] values = randomValues(n, 42L);
-            runDynamicChanges(rows, values, n, 0, "beginning", "Theta(n)");
-            runLinkedChanges(rows, values, n, 0, "beginning", "Theta(1)");
+            next = runDynamicChanges(rows, next, values, insertedValues,
+                    n, 0, "beginning", "Theta(n)");
+            next = runLinkedChanges(rows, next, values, insertedValues,
+                    n, 0, "beginning", "Theta(1)");
             int middle = n / 2;
-            runDynamicChanges(rows, values, n, middle, "middle", "Theta(n)");
-            runLinkedChanges(rows, values, n, middle, "middle", "Theta(n)");
+            next = runDynamicChanges(rows, next, values, insertedValues,
+                    n, middle, "middle", "Theta(n)");
+            next = runLinkedChanges(rows, next, values, insertedValues,
+                    n, middle, "middle", "Theta(n)");
         }
+        return next;
     }
 
-    private static void runDynamicChanges(List<ResultRow> rows, int[] values,
-                                          int n, int index, String position,
-                                          String complexity) {
+    private static int runDynamicChanges(ResultRow[] rows, int next,
+                                         int[] values, int[] insertedValues,
+                                         int n, int index, String position,
+                                         String complexity) {
         long insertTime = 0;
         long insertMetric = 0;
         long removeTime = 0;
@@ -169,7 +183,7 @@ public final class Benchmark {
             array.resetMetrics();
             long start = System.nanoTime();
             for (int operation = 0; operation < CHANGE_OPERATIONS; operation++) {
-                array.add(index, -operation - 1);
+                array.add(index, insertedValues[operation]);
             }
             insertTime += System.nanoTime() - start;
             insertMetric += array.getMovements();
@@ -183,15 +197,17 @@ public final class Benchmark {
             removeMetric += array.getMovements();
             verifyRestored(array, values);
         }
-        rows.add(row("insertion_removal", "DynamicArray", "insert_" + position, n,
-                CHANGE_OPERATIONS, insertTime, "element_movements", insertMetric, complexity));
-        rows.add(row("insertion_removal", "DynamicArray", "remove_" + position, n,
-                CHANGE_OPERATIONS, removeTime, "element_movements", removeMetric, complexity));
+        rows[next++] = row("insertion_removal", "DynamicArray", "insert_" + position, n,
+                CHANGE_OPERATIONS, insertTime, "element_movements", insertMetric, complexity);
+        rows[next++] = row("insertion_removal", "DynamicArray", "remove_" + position, n,
+                CHANGE_OPERATIONS, removeTime, "element_movements", removeMetric, complexity);
+        return next;
     }
 
-    private static void runLinkedChanges(List<ResultRow> rows, int[] values,
-                                         int n, int index, String position,
-                                         String complexity) {
+    private static int runLinkedChanges(ResultRow[] rows, int next,
+                                        int[] values, int[] insertedValues,
+                                        int n, int index, String position,
+                                        String complexity) {
         long insertTime = 0;
         long insertMetric = 0;
         long removeTime = 0;
@@ -201,7 +217,7 @@ public final class Benchmark {
             list.resetMetrics();
             long start = System.nanoTime();
             for (int operation = 0; operation < CHANGE_OPERATIONS; operation++) {
-                list.add(index, -operation - 1);
+                list.add(index, insertedValues[operation]);
             }
             insertTime += System.nanoTime() - start;
             insertMetric += list.getAccesses();
@@ -215,13 +231,14 @@ public final class Benchmark {
             removeMetric += list.getAccesses();
             verifyRestored(list, values);
         }
-        rows.add(row("insertion_removal", "LinkedList", "insert_" + position, n,
-                CHANGE_OPERATIONS, insertTime, "node_accesses", insertMetric, complexity));
-        rows.add(row("insertion_removal", "LinkedList", "remove_" + position, n,
-                CHANGE_OPERATIONS, removeTime, "node_accesses", removeMetric, complexity));
+        rows[next++] = row("insertion_removal", "LinkedList", "insert_" + position, n,
+                CHANGE_OPERATIONS, insertTime, "node_accesses", insertMetric, complexity);
+        rows[next++] = row("insertion_removal", "LinkedList", "remove_" + position, n,
+                CHANGE_OPERATIONS, removeTime, "node_accesses", removeMetric, complexity);
+        return next;
     }
 
-    private static void runPriorityProcessing(List<ResultRow> rows) {
+    private static int runPriorityProcessing(ResultRow[] rows, int next) {
         for (int n : SIZES) {
             int[] values = randomValues(n, 42L);
             long insertTime = 0;
@@ -252,11 +269,12 @@ public final class Benchmark {
                 verifyNonDecreasing(extracted);
                 sink ^= extracted[n - 1];
             }
-            rows.add(row("priority_processing", "MinHeap", "insert", n, n,
-                    insertTime, "comparisons", insertComparisons, "O(log n) each"));
-            rows.add(row("priority_processing", "MinHeap", "extract_min", n, n,
-                    extractTime, "comparisons", extractComparisons, "Theta(log n) each"));
+            rows[next++] = row("priority_processing", "MinHeap", "insert", n, n,
+                    insertTime, "comparisons", insertComparisons, "O(log n) each");
+            rows[next++] = row("priority_processing", "MinHeap", "extract_min", n, n,
+                    extractTime, "comparisons", extractComparisons, "Theta(log n) each");
         }
+        return next;
     }
 
     private static ResultRow row(String workload, String structure, String operation,
@@ -341,7 +359,7 @@ public final class Benchmark {
         }
     }
 
-    private static void writeCsv(List<ResultRow> rows, Path output) throws IOException {
+    private static void writeCsv(ResultRow[] rows, Path output) throws IOException {
         Path parent = output.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
