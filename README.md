@@ -16,6 +16,8 @@ Requirements: JDK 17+, Maven 3.9+, and Python 3 with Matplotlib. Run all tests w
 
 `O` is an upper bound, `Ω` is a lower bound, and `Θ` is a tight bound.
 
+For example, array `get(index)` is both O(1) and Ω(1), hence Θ(1). Index averages assume uniformly chosen valid positions; search averages use the experiment's mixture of present and absent values. Amortized cost averages the work over a sequence of operations, including occasional resizing.
+
 ### Dynamic Array
 
 | Operation | Best | Average | Worst | Auxiliary space | Reason |
@@ -40,9 +42,11 @@ Requirements: JDK 17+, Maven 3.9+, and Python 3 with Matplotlib. Run all tests w
 
 | Operation | Best | Average | Worst | Auxiliary space | Reason |
 |---|---:|---:|---:|---:|---|
-| `insert(x)` | Θ(1) | O(log n) | Θ(log n) | Θ(1) | The new value may move from a leaf to the root. |
+| `insert(x)` | Θ(1) | O(log n) amortized upper bound | Θ(n) with resize; Θ(log n) otherwise | Θ(n) with resize; Θ(1) otherwise | Sift-up follows the heap height; resizing copies the stored elements. |
 | `peekMin()` | Θ(1) | Θ(1) | Θ(1) | Θ(1) | The minimum is stored at index 0. |
 | `extractMin()` | Θ(1) | Θ(log n) | Θ(log n) | Θ(1) | The replacement root may move down the heap height. |
+
+Heap insertion's expected cost depends on the input distribution. O(log n) is a distribution-independent amortized upper bound; the random-input experiment needs fewer comparisons. Doubling capacity makes total resizing work O(n) across n insertions.
 
 Operations with the same asymptotic complexity can still have different practical costs. Dynamic Array uses contiguous memory and cache-friendly loops. Linked List follows object references and allocates a node for every value. Middle operations are Θ(n) for both structures, but their constants and memory access patterns differ.
 
@@ -63,11 +67,11 @@ The loop shifts the suffix one position to the right.
 
 After the minimum is saved, the last element is moved to the root.
 
-**Invariant.** At the start of every iteration, all heap edges satisfy the min-heap property except possibly the edges from the current `index` to its children. Both child subtrees are valid min-heaps.
+**Invariant.** At the start of every iteration, all heap edges satisfy the min-heap property except possibly the edges from the current `index` to its children. Both child subtrees are valid min-heaps. If the current node has a parent, that parent's value is no larger than any value in the current subtree.
 
 1. **Initialization.** Before `siftDown`, only the new root can violate the property. Its left and right subtrees were valid before the last element was moved.
-2. **Maintenance.** The loop selects the smaller child. If the current value is larger, they are swapped. The old position becomes valid because the smaller child is no larger than its sibling. The only possible violation moves to the selected child, so the invariant is preserved.
-3. **Termination.** The loop stops at a leaf or when the current value is no larger than the smaller child. The current edge is then valid, and the invariant says every other edge is already valid.
+2. **Maintenance.** The loop selects the smaller child. If the current value is larger, they are swapped. The promoted value is no larger than its sibling or the displaced value, and the parent bound keeps its edge to the ancestor valid. The promoted value also bounds the remaining child subtree. The only possible violation moves to the selected child, so the invariant is preserved.
+3. **Termination.** Each swap moves down one level, so the loop ends within the heap height. It stops at a leaf or when the current value is no larger than the smaller child. The current edges are then valid, and the invariant says every other edge is already valid.
 4. **Correctness.** The saved root was the minimum. After the loop, the remaining elements satisfy the heap property, so `extractMin()` returns the correct value and leaves a valid min-heap.
 
 ## 4. Experimental Setup
@@ -83,7 +87,7 @@ After the minimum is saved, the last element is moved to the root.
 - Input values and operation indices are generated before timing.
 - One untimed warm-up is performed before recorded experiments.
 
-The insertion phase adds 1,000 values and the following removal phase removes those values, restoring the original structure. This keeps `m = 1,000` valid even when `n = 100`. Timed regions contain only the required data-structure operations.
+The PDF asks to restore n elements before 1,000 removals, which is impossible for n = 100. This experiment uses paired phases: insertion adds 1,000 values, then removal deletes those values and restores the original structure. The removal phase therefore starts with n + 1,000 elements. Both phases keep m = 1,000, and the middle index stays fixed at the original n / 2. Timed regions contain the operations and the loop/result handling needed to execute them.
 
 Metrics are direct array accesses, linked-node accesses, element movements, or heap comparisons. Setup, validation, CSV writing, and printing are outside the timed regions.
 
@@ -91,7 +95,7 @@ Metrics are direct array accesses, linked-node accesses, element movements, or h
 
 ### Workload 1: Random Access
 
-| n | Dynamic Array time (ms) | Accesses | Linked List time (ms) | Node accesses |
+| n | Dynamic Array time (ms), Θ(1) per get | Accesses | Linked List time (ms), Θ(n) average per get | Node accesses |
 |---:|---:|---:|---:|---:|
 | 100 | 0.192 | 10,000 | 0.487 | 511,508 |
 | 1,000 | 0.038 | 10,000 | 5.307 | 5,015,208 |
@@ -102,7 +106,7 @@ Dynamic Array performs exactly one access per request, independent of `n`. Linke
 
 ### Workload 2: Search
 
-| n | Dynamic Array time (ms) | Comparisons | Linked List time (ms) | Comparisons |
+| n | Dynamic Array time (ms), Θ(n) average per search | Comparisons | Linked List time (ms), Θ(n) average per search | Comparisons |
 |---:|---:|---:|---:|---:|
 | 100 | 0.174 | 75,572 | 0.180 | 75,572 |
 | 1,000 | 0.599 | 752,172 | 1.305 | 752,172 |
@@ -144,7 +148,7 @@ Both structures have linear middle operations. The array is faster for large `n`
 | 10,000 | 0.416 | 22,785 | 0.968 | 216,538 |
 | 100,000 | 1.426 | 228,896 | 7.532 | 2,831,900 |
 
-All extracted sequences were verified to be non-decreasing. Extraction comparisons grow near `n log n`. Random insertion used about 2.3 comparisons per item, which is below its `O(log n)` worst-case bound.
+All extracted sequences were verified to be non-decreasing. Extraction comparisons grow near `n log n`. Random insertion used about 2.3 comparisons per item, below the O(log n) sift-up comparison bound. The measured insertion time also includes resizing.
 
 ![Execution time vs. n](results/plots/time_vs_n.png)
 
@@ -159,7 +163,7 @@ All extracted sequences were verified to be non-decreasing. Extraction compariso
 5. Resizing, node allocation, pointer traversal, bounds checks, cache locality, and branch behavior affect practical time without changing asymptotic complexity.
 6. Dynamic Array is preferable for frequent indexed access, compact storage, and append-heavy workloads.
 7. Linked List is useful when insertions or removals occur frequently at the head, where no shifting or traversal is required.
-8. Min-Heap is appropriate for priority processing because `peekMin()` is Θ(1) and insert/extract are O(log n), unlike repeatedly searching an unsorted collection.
+8. Min-Heap is appropriate for priority processing because `peekMin()` is Θ(1), insertion is O(log n) amortized, and extraction is O(log n) worst-case, unlike repeatedly searching an unsorted collection.
 9. The data structure must match the workload: arrays for random access, linked lists for head updates, and heaps for repeated minimum-priority processing.
 
 ## 7. Design Recommendations
@@ -170,7 +174,7 @@ All extracted sequences were verified to be non-decreasing. Extraction compariso
 | Sequential search | Dynamic Array | Both are Θ(n), but contiguous memory is faster in practice. |
 | Insert/remove at beginning | Linked List | Both operations are Θ(1). |
 | Insert/remove in middle | Dynamic Array for this implementation | Both are Θ(n), but array movement was faster than node traversal. |
-| Priority processing | Min-Heap | Minimum lookup is Θ(1); updates are O(log n). |
+| Priority processing | Min-Heap | Lookup is Θ(1); insertion is O(log n) amortized and extraction is O(log n) worst-case. |
 
 ## 8. Conclusion
 

@@ -47,11 +47,11 @@ insertion_removal,DynamicArray,insert_middle,100000,1000,9395500,9.395500,elemen
 insertion_removal,DynamicArray,remove_middle,100000,1000,9148420,9.148420,element_movements,50499500,Theta(n)
 insertion_removal,LinkedList,insert_middle,100000,1000,63467500,63.467500,node_accesses,50000000,Theta(n)
 insertion_removal,LinkedList,remove_middle,100000,1000,67722740,67.722740,node_accesses,50001000,Theta(n)
-priority_processing,MinHeap,insert,100,100,3280,0.003280,comparisons,207,O(log n) each
-priority_processing,MinHeap,extract_min,100,100,36340,0.036340,comparisons,845,Theta(log n) each
-priority_processing,MinHeap,insert,1000,1000,34980,0.034980,comparisons,2207,O(log n) each
-priority_processing,MinHeap,extract_min,1000,1000,73780,0.073780,comparisons,14988,Theta(log n) each
-priority_processing,MinHeap,insert,10000,10000,416460,0.416460,comparisons,22785,O(log n) each
-priority_processing,MinHeap,extract_min,10000,10000,968440,0.968440,comparisons,216538,Theta(log n) each
-priority_processing,MinHeap,insert,100000,100000,1426260,1.426260,comparisons,228896,O(log n) each
-priority_processing,MinHeap,extract_min,100000,100000,7531700,7.531700,comparisons,2831900,Theta(log n) each
+priority_processing,MinHeap,insert,100,100,3280,0.003280,comparisons,207,O(log n) amortized
+priority_processing,MinHeap,extract_min,100,100,36340,0.036340,comparisons,845,O(log n) worst-case
+priority_processing,MinHeap,insert,1000,1000,34980,0.034980,comparisons,2207,O(log n) amortized
+priority_processing,MinHeap,extract_min,1000,1000,73780,0.073780,comparisons,14988,O(log n) worst-case
+priority_processing,MinHeap,insert,10000,10000,416460,0.416460,comparisons,22785,O(log n) amortized
+priority_processing,MinHeap,extract_min,10000,10000,968440,0.968440,comparisons,216538,O(log n) worst-case
+priority_processing,MinHeap,insert,100000,100000,1426260,1.426260,comparisons,228896,O(log n) amortized
+priority_processing,MinHeap,extract_min,100000,100000,7531700,7.531700,comparisons,2831900,O(log n) worst-case

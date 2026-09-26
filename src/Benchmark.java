@@ -270,9 +270,9 @@ public final class Benchmark {
                 sink ^= extracted[n - 1];
             }
             rows[next++] = row("priority_processing", "MinHeap", "insert", n, n,
-                    insertTime, "comparisons", insertComparisons, "O(log n) each");
+                    insertTime, "comparisons", insertComparisons, "O(log n) amortized");
             rows[next++] = row("priority_processing", "MinHeap", "extract_min", n, n,
-                    extractTime, "comparisons", extractComparisons, "Theta(log n) each");
+                    extractTime, "comparisons", extractComparisons, "O(log n) worst-case");
         }
         return next;
     }
